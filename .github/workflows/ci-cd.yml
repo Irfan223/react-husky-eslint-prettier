@@ -49,4 +49,4 @@ jobs:
 
       - name: Simulate deployment for dev/test/uat
         if: github.ref != 'refs/heads/main'
-        run: echo "✅ Simulated deployment for branch: ${GITHUB_REF#refs/heads/}"
+        run: echo "✅ Simulated deployment for branch: ${{ github.ref_name }}"
