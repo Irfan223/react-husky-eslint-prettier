@@ -1,0 +1,47 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - dev
+      - test
+      - uat
+      - main
+  pull_request:
+    branches:
+      - dev
+      - test
+      - uat
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed for deployment from main
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint the code
+        run: npm run lint
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Deploy to GitHub Pages (only for main)
+        if: github.ref == 'refs/heads/main'
+        run: npx gh-pages -d dist
+
+      - name: Simulate deployment for dev/test/uat
+        if: github.ref != 'refs/heads/main'
+        run: echo "✅ Simulated deployment for branch: ${GITHUB_REF#refs/heads/}"
